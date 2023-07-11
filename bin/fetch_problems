@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'excon'
+require 'json'
+
+API_FETCH_PROBLEM = 'https://api.icfpcontest.com/problem?problem_id=%i'
+PROBLEM_NAME_TPL = "problem-%i.json"
+PROBLEMS_DIR = File.expand_path('../../problems', __FILE__)
+
+from_id, to_id = ARGV
+
+(from_id.to_i..to_id.to_i).each do |n|
+  puts "fetching ##{n} problem"
+  resp = Excon.get(API_FETCH_PROBLEM % n)
+  parsed_body = JSON.parse(resp.body)
+  File.write(File.join(PROBLEMS_DIR, PROBLEM_NAME_TPL % n), parsed_body['Success'])
+end

@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'parallel'
+
+Parallel.each(1..90, in_processes: 10) do |n|
+  puts "processing #{n}"
+  `cat problems/problem-#{n}.json | ruby --jit bin/best_random > solutions/sol#{n}.json`
+end

@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'parallel'
+
+Parallel.each(1..90, in_processes: 10) do |n|
+  puts "##{n} - " + `bin/calc_score #{n}`
+end

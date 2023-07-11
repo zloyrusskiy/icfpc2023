@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby --jit
+# frozen_string_literal: true
+
+require 'json'
+require_relative '../src/parser'
+require_relative '../src/scoring'
+require_relative '../src/constants'
+
+ITERATIONS = 10
+
+# read file
+input = ARGF.read
+
+room, musicians, attendees = Parser.parse_problem(input)
+
+best_score = 0
+best_result = nil
+
+ITERATIONS.times do
+
+  placements = []
+  musicians.size.times do
+    new_x = rand(room.stage.min_x..room.stage.max_x)
+    new_y = rand(room.stage.min_y..room.stage.max_y)
+
+    new_placement = Point.new(new_x, new_y)
+
+    if placements.all? { |point| new_placement.distance_to(point).value > Constants::MUSICIANS_MIN_RADIUS }
+      placements << new_placement
+    else
+      redo
+    end
+  end
+  # output result in right format
+  result = {
+    placements: placements.map { |point| { x: point.x, y: point.y } }
+  }
+
+  solution = Parser.parse_solution(result.to_json)
+
+  last_score = Scoring.calc(room, musicians, attendees, solution)
+
+  if last_score > best_score
+    best_score = last_score
+  end
+
+  best_result = result.to_json
+end
+
+puts best_result

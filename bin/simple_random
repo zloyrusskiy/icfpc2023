@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'json'
+require_relative '../src/parser'
+require_relative '../src/constants'
+
+# read file
+input = ARGF.read
+
+room, musicians, _attendees = Parser.parse_problem(input)
+
+placements = []
+musicians.size.times do
+  new_x = rand(room.stage.min_x..room.stage.max_x)
+  new_y = rand(room.stage.min_y..room.stage.max_y)
+
+  new_placement = Point.new(new_x, new_y)
+
+  if placements.all? { |point| new_placement.distance_to(point).value > Constants::MUSICIANS_MIN_RADIUS }
+    placements << new_placement
+  else
+    redo
+  end
+end
+# output result in right format
+result = {
+  placements: placements.map { |point| { x: point.x, y: point.y } }
+}
+
+puts result.to_json

@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'json'
+require_relative '../src/constants'
+require_relative '../src/parser'
+require_relative '../src/scoring'
+
+# read file
+num = ARGV[0].to_i
+
+problem_path = File.expand_path("../../problems/problem-#{num}.json", __FILE__)
+sol_path = File.expand_path("../../solutions/sol#{num}.json", __FILE__)
+
+room, musicians, attendees = Parser.parse_problem(File.read(problem_path))
+
+solution = Parser.parse_solution(File.read(sol_path))
+
+puts Scoring.calc(room, musicians, attendees, solution)
